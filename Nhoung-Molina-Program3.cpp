@@ -34,22 +34,27 @@ struct event
 
 //Prototypes
 void read_event(event & new_event);
-
-
+bool repeat(char response);
+void save_event(event event_list[], int num_events);
 
 
 int main()
 {
 	//Variables
 	event memory[MAX]; 	//All of the events in the file
-	event new_event;	
+	int num_events {0}; 	//Number of events added
+	char response {' '}; 	//Does the user want to do this again
 	//Read in new events from the user
-	read_event(new_event);
-	
-	
-	
-	
-	
+	if (num_events < MAX)
+	{
+		do
+		{
+			read_event(memory[num_events]);
+			++num_events;
+		} while (num_events < MAX && repeat(response));
+
+	}
+	save_event(memory, num_events);
 	
 	
 	
@@ -82,4 +87,34 @@ void read_event(event & new_event)
 	cout << "What do you want to do when you attend the event: ";
 	cin.get(new_event.desc, DESC, '\n');
 	cin.ignore(100, '\n');
+}
+
+//Does the user want to do it again
+bool repeat(char response)
+{
+	cout << "Do you want to enter another event?: y/n " << endl;
+	cin >> response;
+	cin.ignore(100, '\n');
+	if (toupper(response) == 'Y')
+		return true;
+	return false;
+}
+
+//Save the events to the external data file
+void save_event(event event_list[], int num_event)
+{
+	ofstream file_out;
+	file_out.open("comic_con.txt");
+	
+	if (file_out)
+	{
+		for (int i = 0; i < num_event; ++i)
+		{
+			file_out << event_list[i].name << "|"
+				 << event_list[i].day << "|"
+				 << event_list[i].time << "|" 
+				 << event_list[i].length_event << "|" 
+				 << event_list[i].desc << "|" << endl;
+		}
+	}
 }
